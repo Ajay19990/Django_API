@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -66,11 +67,55 @@ class LoginViewSet(viewsets.ViewSet):
   #     #   return ObtainAuthToken().post(req)
   #   except:
   #     return Response({'badreq':False})
+from rest_framework.decorators import api_view
+@api_view(['GET'])
+def get_servicelist_bycategoty(req, catId):
+  category_instace = models.ServiceCategories.objects.get(pk=catId)
+  print(category_instace)
+  data = list(models.Service.objects.filter(cat=category_instace).values())
+  print(data)
+  return Response(data)
+  # serializer = serializers.ServiceListSerializer(data=data)
+  # if serializer.is_valid():
+  #   return Response(data)
+  # else:
+  #   return Response(status=status.HTTP_404_NOT_FOUND)
 
 class GetServiceList(viewsets.ModelViewSet):
+
+  def retrieve(self, req, pk=None):
+    try:
+      instance = models.Service.objects.get(id=pk)
+      serializer = self.get_serializer(instance)
+      return Response(serializer.data)
+    except:
+      return Response(status=status.HTTP_404_NOT_FOUND)
+
+  # def list(self, req, key=None):
+  #   try:
+  #     instance = models.Service.objects.get
+
   queryset = models.Service.objects.all()
   serializer_class = serializers.ServiceSerializer
   authentication_classes = (TokenAuthentication,)
+  permission_classes = (IsAuthenticated,)
+  http_method_names = ['get']
+
+class GetCategoryList(viewsets.ModelViewSet):
+
+  def retrieve(self, req, pk=None):
+    try:
+      instance = models.ServiceCategories.objects.get(id=pk)
+      serializer = self.get_serializer(instance)
+      return Response(serializer.data)
+    except:
+      return Response(status=status.HTTP_404_NOT_FOUND)
+    
+
+  queryset = models.ServiceCategories.objects.all()
+  serializer_class = serializers.ServiceCategoriesSerializer
+  authentication_classes = (TokenAuthentication,)
+  permission_classes = (IsAuthenticated,)
   http_method_names = ['get']
 
 

@@ -32,10 +32,11 @@ class ServiceCategoriesSerializer(serializers.ModelSerializer):
     service_category.save()
     return service_category
 
+
 class ServiceSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.Service
-    fields = ('name', 'providerName', 'providerFirstName', 'cat', 'short_description', 'rating', 'created_at', 'lat', 'lon')
+    fields = ('id', 'name', 'providerName', 'providerFirstName', 'cat', 'short_description', 'rating', 'created_at', 'lat', 'lon')
   # def create(self, validated_data):
   #   service = models.Service(
   #     name=validated_data['name'],
@@ -46,3 +47,8 @@ class ServiceSerializer(serializers.ModelSerializer):
   #     rating=validated_data['rating']
   #     lat
   #   )
+
+class ServiceListSerializer(serializers.Serializer):
+  list = serializers.ListField(child=ServiceSerializer())
+    
+    
