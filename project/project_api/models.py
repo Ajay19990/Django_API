@@ -46,6 +46,20 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
   is_active = models.BooleanField(default=True)
   is_staff = models.BooleanField(default=False)
 
+  following_services = models.TextField(default='')
+
+  def set_service_id(self, element):
+    if self.following_services:
+      self.following_services = self.following_services + ',' + element
+    else:
+      self.following_services = element
+
+  def get_service_ids(self):
+    if self.following_services:
+      return self.following_services.split(',')
+    else:
+      None
+
   objects = UserProfileManager()
 
   USERNAME_FIELD = 'email'

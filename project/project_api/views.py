@@ -70,16 +70,40 @@ class LoginViewSet(viewsets.ViewSet):
 from rest_framework.decorators import api_view
 @api_view(['GET'])
 def get_servicelist_bycategoty(req, catId):
-  category_instace = models.ServiceCategories.objects.get(pk=catId)
-  print(category_instace)
-  data = list(models.Service.objects.filter(cat=category_instace).values())
-  print(data)
-  return Response(data)
-  # serializer = serializers.ServiceListSerializer(data=data)
-  # if serializer.is_valid():
-  #   return Response(data)
-  # else:
-  #   return Response(status=status.HTTP_404_NOT_FOUND)
+  try:
+    category_instace = models.ServiceCategories.objects.get(pk=catId)
+    data = list(models.Service.objects.filter(cat=category_instace).values())
+    
+    return Response(data)
+  except:
+    return Response({'error': 'No category with this id.'})
+
+@api_view(['GET'])
+def follow_service(req, serviceId):
+  try:
+    service = models.Service.objects.get(pk=serviceId)
+    user = models.UserProfile.objects.filter(id__iexact = req.user.id)
+    if user.exists():
+      user = user.first()
+      user.set_service_id(str(serviceId))
+      user.save()
+      return Response({'success': 'followed successfully.'})
+    else:
+      return Response({'error': 'can not follow service.'})
+  except:
+    return Response({'error': 'can not follow service.'})
+
+@api_view(['GET'])
+def get_following_services(req):
+  try:
+    user = models.UserProfile.objects.filter(id__iexact = req.user.id)
+    user = user.first()
+    ids = user.get_service_ids()
+    services = list(models.Service.objects.filter(pk__in=ids).values())
+    return Response(services)
+  except:
+    return Response({'error': 'unable to fetch services.'})
+
 
 class GetServiceList(viewsets.ModelViewSet):
 
@@ -90,10 +114,6 @@ class GetServiceList(viewsets.ModelViewSet):
       return Response(serializer.data)
     except:
       return Response(status=status.HTTP_404_NOT_FOUND)
-
-  # def list(self, req, key=None):
-  #   try:
-  #     instance = models.Service.objects.get
 
   queryset = models.Service.objects.all()
   serializer_class = serializers.ServiceSerializer

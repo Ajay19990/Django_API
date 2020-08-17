@@ -13,5 +13,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('validate-phone/', views.ValidatePhoneSendOTP.as_view()),
     path('validate-otp/', views.ValidateOTP.as_view()),
-    path('service-list-bycategories/<int:catId>', views.get_servicelist_bycategoty, name='service-list-bycategories')
+    path('service-list-bycategories/<int:catId>', views.get_servicelist_bycategoty, name='service-list-bycategories'),
+    path('follow-service/<int:serviceId>', views.follow_service, name='follow-service'),
+    path('get_following_services/', views.get_following_services, name='get_following_services')
 ]
