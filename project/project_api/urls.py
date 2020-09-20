@@ -15,5 +15,5 @@ urlpatterns = [
     path('validate-otp/', views.ValidateOTP.as_view()),
     path('service-list-bycategories/<int:catId>', views.get_servicelist_bycategoty, name='service-list-bycategories'),
     path('follow-service/<int:serviceId>', views.follow_service, name='follow-service'),
-    path('get_following_services/', views.get_following_services, name='get_following_services')
+    path('get-following-services/', views.get_following_services, name='get-following-services')
 ]

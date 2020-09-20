@@ -23,6 +23,9 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     if serializer.is_valid():
       serializer.save()
       return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else: 
+      return Response({'error':'Unable to signup'}, status=status.HTTP_400_BAD_REQUEST)
+
 
   serializer_class = serializers.UserProfileSerializer
   queryset = models.UserProfile.objects.all()
@@ -87,11 +90,11 @@ def follow_service(req, serviceId):
       user = user.first()
       user.set_service_id(str(serviceId))
       user.save()
-      return Response({'success': 'followed successfully.'})
+      return Response({'success': 'Followed successfully.'}, status=status.HTTP_200_OK)
     else:
-      return Response({'error': 'can not follow service.'})
+      return Response({'error': 'Invalid user, please create an account.'}, status=status.HTTP_400_BAD_REQUEST)
   except:
-    return Response({'error': 'can not follow service.'})
+    return Response({'error': 'Can not follow service.'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def get_following_services(req):
@@ -102,7 +105,7 @@ def get_following_services(req):
     services = list(models.Service.objects.filter(pk__in=ids).values())
     return Response(services)
   except:
-    return Response({'error': 'unable to fetch services.'})
+    return Response({'error': 'unable to fetch services.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetServiceList(viewsets.ModelViewSet):
